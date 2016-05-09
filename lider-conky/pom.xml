@@ -41,7 +41,49 @@
 	</dependencies>
 
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>${maven.resources.plugin.version}</version>
+				<executions>
+					<execution>
+						<id>filter</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>resources</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>${build.helper.maven.plugin.version}</version>
+				<executions>
+					<execution>
+						<id>attach-artifacts</id>
+						<phase>package</phase>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<file>target/classes/tr.org.liderahenk.conky.cfg</file>
+									<type>cfg</type>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
@@ -51,10 +93,7 @@
 						<_removeheaders>Import-Service,Export-Service</_removeheaders>
 						<Bundle-SymbolicName>lider-conky</Bundle-SymbolicName>
 						<Bundle-Version>1.0.0</Bundle-Version>
-						<!-- There is a bug that imports packages reside in the bundle. Here we prevent this: -->
 						<Import-Package>!tr.org.liderahenk.conky.*, *</Import-Package>
-						<!-- If the plugin also have a *-db bundle, then use this line instead: -->
-						<Import-Package>tr.org.liderahenk.conky.entities.*, !tr.org.liderahenk.conky.*, *</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>

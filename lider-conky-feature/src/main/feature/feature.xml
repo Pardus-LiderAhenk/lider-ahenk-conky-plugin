@@ -29,6 +29,7 @@
     </feature>
 
     <feature name="lider-conky-bundles" version="${project.version}">
+        <configfile finalname="/etc/tr.org.liderahenk.conky.cfg">mvn:${groupId}/lider-conky/${project.version}/cfg</configfile>
 		<bundle>mvn:tr.org.liderahenk/lider-conky/${project.version}</bundle>
     </feature>
 

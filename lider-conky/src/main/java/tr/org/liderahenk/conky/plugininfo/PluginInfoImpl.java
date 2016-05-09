@@ -7,10 +7,10 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.plugin.IPluginInfo;
 import tr.org.liderahenk.lider.core.api.pluginmanager.IPluginDistro;
-import tr.org.liderahenk.lider.core.api.pluginmanager.PluginDistroSSH;
+import tr.org.liderahenk.lider.core.api.pluginmanager.PluginDistroHTTP;
 
 public class PluginInfoImpl implements IPluginInfo {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(PluginInfoImpl.class);
 
 	private String pluginName;
@@ -29,13 +29,7 @@ public class PluginInfoImpl implements IPluginInfo {
 
 	// Distro configuration
 
-	private String distroHost;
-
-	private String distroUsername;
-
-	private String distroPassword;
-
-	private String distroPath;
+	private String distroUrl;
 
 	public void refresh() {
 		logger.info("Configuration updated using blueprint: {}", prettyPrintConfig());
@@ -45,9 +39,7 @@ public class PluginInfoImpl implements IPluginInfo {
 	public String toString() {
 		return "PluginInfoImpl [pluginName=" + pluginName + ", pluginVersion=" + pluginVersion + ", description="
 				+ description + ", machineOriented=" + machineOriented + ", userOriented=" + userOriented
-				+ ", policyPlugin=" + policyPlugin + ", xBased=" + xbased + ", distroHost=" + distroHost
-				+ ", distroUsername=" + distroUsername + ", distroPassword=" + distroPassword + ", distroPath="
-				+ distroPath + "]";
+				+ ", policyPlugin=" + policyPlugin + ", xbased=" + xbased + ", distroUrl=" + distroUrl + "]";
 	}
 
 	public String prettyPrintConfig() {
@@ -121,69 +113,25 @@ public class PluginInfoImpl implements IPluginInfo {
 		this.xbased = xbased;
 	}
 
-	public String getDistroHost() {
-		return distroHost;
+	public String getDistroUrl() {
+		return distroUrl;
 	}
 
-	public void setDistroHost(String distroHost) {
-		this.distroHost = distroHost;
-	}
-
-	public String getDistroUsername() {
-		return distroUsername;
-	}
-
-	public void setDistroUsername(String distroUsername) {
-		this.distroUsername = distroUsername;
-	}
-
-	public String getDistroPassword() {
-		return distroPassword;
-	}
-
-	public void setDistroPassword(String distroPassword) {
-		this.distroPassword = distroPassword;
-	}
-
-	public String getDistroPath() {
-		return distroPath;
-	}
-
-	public void setDistroPath(String distroPath) {
-		this.distroPath = distroPath;
+	public void setDistroUrl(String distroUrl) {
+		this.distroUrl = distroUrl;
 	}
 
 	@JsonIgnore
 	@Override
 	public IPluginDistro getDistro() {
-		return new PluginDistroSSH() {
-			private static final long serialVersionUID = 242815723673154512L;
+		return new PluginDistroHTTP() {
+			private static final long serialVersionUID = 8638535178751232641L;
 
 			@Override
-			public String getUsername() {
-				return getDistroUsername();
-			}
-
-			@Override
-			public String getPublicKey() {
-				return null;
-			}
-
-			@Override
-			public String getPath() {
-				return getDistroPath();
-			}
-
-			@Override
-			public String getPassword() {
-				return getDistroPassword();
-			}
-
-			@Override
-			public String getHost() {
-				return getDistroHost();
+			public String getUrl() {
+				return getDistroUrl();
 			}
 		};
 	}
-	
+
 }

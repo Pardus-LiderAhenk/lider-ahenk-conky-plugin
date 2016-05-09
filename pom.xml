@@ -21,6 +21,8 @@
 		<maven.jar.plugin.version>2.3.2</maven.jar.plugin.version>
 		<maven.bundle.plugin.version>3.0.1</maven.bundle.plugin.version>
 		<karaf.maven.plugin>4.0.3</karaf.maven.plugin>
+		<findbugs.maven.plugin.version>3.0.0</findbugs.maven.plugin.version>
+		<checkstyle.maven.plugin.version>2.12</checkstyle.maven.plugin.version>
 		<java.version>1.6</java.version>
 		<junit.version>4.12</junit.version>
 		<log4j.version>1.2.17</log4j.version>
@@ -30,6 +32,8 @@
 		<aries.blueprint.version>1.1.0</aries.blueprint.version>
 		<tycho.version>0.23.0</tycho.version>
 		<geronimo.jpa.version>1.1</geronimo.jpa.version>
+		<maven.resources.plugin.version>2.7</maven.resources.plugin.version>
+		<build.helper.maven.plugin.version>1.10</build.helper.maven.plugin.version>
 	</properties>
 
 	<licenses>
@@ -58,6 +62,15 @@
 					<target>${java.version}</target>
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<compilerArgument>-proc:none</compilerArgument>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>${findbugs.maven.plugin.version}</version>
+				<configuration>
+					<xmlOutput>true</xmlOutput>
+					<findbugsXmlOutput>true</findbugsXmlOutput>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -143,6 +156,67 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
+	<profiles>
+		<profile>
+			<id>findbugs</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>findbugs-maven-plugin</artifactId>
+						<version>${findbugs.maven.plugin.version}</version>
+						<executions>
+							<execution>
+								<phase>compile</phase>
+								<goals>
+									<goal>check</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<failOnError>true</failOnError>
+							<excludeFilterFile>${main.basedir}/findbugs/findbugs-exclude.xml</excludeFilterFile>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>checkstyle</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-checkstyle-plugin</artifactId>
+						<version>${checkstyle.maven.plugin.version}</version>
+						<executions>
+							<execution>
+								<phase>validate</phase>
+								<goals>
+									<goal>checkstyle</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<configLocation>${main.basedir}/checkstyle/checkstyle.xml</configLocation>
+							<!-- TODO need to build suppressions file -->
+							<!-- <suppressionsLocation>${main.basedir}/checkstyle/suppressions.xml</suppressionsLocation> -->
+							<!-- <headerLocation>${main.basedir}/checkstyle/ClassHeader.txt</headerLocation> -->
+							<enableRSS>false</enableRSS>
+							<linkXRef>true</linkXRef>
+							<consoleOutput>true</consoleOutput>
+							<failsOnError>true</failsOnError>
+							<failOnViolation>true</failOnViolation>
+							<includeTestSourceDirectory>false</includeTestSourceDirectory>
+							<enableRulesSummary>true</enableRulesSummary>
+							<propertyExpansion>main.basedir=${main.basedir}</propertyExpansion>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 	<dependencies>
 		<dependency>
