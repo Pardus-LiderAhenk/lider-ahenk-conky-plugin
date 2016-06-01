@@ -19,19 +19,13 @@ class Conky(AbstractCommand):
         super(Conky, self).__init__()
         self.data = data
         self.context = context
-        self.install_command = 'sudo apt-get -y install conky conky-all'
         self.conky_config_file = '/etc/conky/conky.conf'
         self.start_command = 'conky &'
 
     def handle_policy(self):
-        self.install_conky()
         self.create_file()
         self.replace_conky_files()
         self.start_conky()
-
-    def install_conky(self):
-        process = self.context.execute(self.install_command)
-        process.wait()
 
     def create_file(self):
         path = '/tmp/'
