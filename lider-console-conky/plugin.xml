@@ -51,7 +51,8 @@
  				<command
                   commandId="tr.org.liderahenk.liderconsole.commands.ConkyProfile"
                   id="tr.org.liderahenk.liderconsole.commands.ConkyProfile"
-                  tooltip="%command.profile">
+                  tooltip="%command.profile"
+                  icon="icons/16/conky.png">
                   <!-- TODO Uncomment this after updating/fixing LiderSourceProvider -->
 				  <!-- <visibleWhen>
 					   <and>
