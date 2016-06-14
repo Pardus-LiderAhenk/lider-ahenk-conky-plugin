@@ -1,13 +1,10 @@
 package tr.org.liderahenk.conky.plugininfo;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.plugin.IPluginInfo;
-import tr.org.liderahenk.lider.core.api.pluginmanager.IPluginDistro;
-import tr.org.liderahenk.lider.core.api.pluginmanager.PluginDistroHTTP;
 
 public class PluginInfoImpl implements IPluginInfo {
 
@@ -27,10 +24,6 @@ public class PluginInfoImpl implements IPluginInfo {
 
 	private Boolean xbased;
 
-	// Distro configuration
-
-	private String distroUrl;
-
 	public void refresh() {
 		logger.info("Configuration updated using blueprint: {}", prettyPrintConfig());
 	}
@@ -39,7 +32,7 @@ public class PluginInfoImpl implements IPluginInfo {
 	public String toString() {
 		return "PluginInfoImpl [pluginName=" + pluginName + ", pluginVersion=" + pluginVersion + ", description="
 				+ description + ", machineOriented=" + machineOriented + ", userOriented=" + userOriented
-				+ ", policyPlugin=" + policyPlugin + ", xbased=" + xbased + ", distroUrl=" + distroUrl + "]";
+				+ ", policyPlugin=" + policyPlugin + ", xbased=" + xbased + "]";
 	}
 
 	public String prettyPrintConfig() {
@@ -111,27 +104,6 @@ public class PluginInfoImpl implements IPluginInfo {
 
 	public void setXbased(Boolean xbased) {
 		this.xbased = xbased;
-	}
-
-	public String getDistroUrl() {
-		return distroUrl;
-	}
-
-	public void setDistroUrl(String distroUrl) {
-		this.distroUrl = distroUrl;
-	}
-
-	@JsonIgnore
-	@Override
-	public IPluginDistro getDistro() {
-		return new PluginDistroHTTP() {
-			private static final long serialVersionUID = 8638535178751232641L;
-
-			@Override
-			public String getUrl() {
-				return getDistroUrl();
-			}
-		};
 	}
 
 }

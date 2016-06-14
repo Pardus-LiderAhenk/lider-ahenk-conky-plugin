@@ -1,60 +1,60 @@
-
-#!/usr/bin/python
+# !/usr/bin/python
 # -*- coding: utf-8 -*-
 
-"""
-Style Guide is PEP-8
-https://www.python.org/dev/peps/pep-0008/
-"""
 
 import json
-import os
-import tempfile
 
-from base.plugin.AbstractCommand import AbstractCommand
+from base.plugin.abstract_plugin import AbstractPlugin
 
 
-class Conky(AbstractCommand):
+class Conky(AbstractPlugin):
     def __init__(self, data, context):
         super(Conky, self).__init__()
         self.data = data
         self.context = context
+        self.logger = self.get_logger()
         self.conky_config_file = '/etc/conky/conky.conf'
-        self.start_command = 'conky &'
+        self.start_command = 'conky'
+        self.logger.debug('[Conky] Parameters were initialized.')
 
     def handle_policy(self):
-        self.create_file()
-        self.replace_conky_files()
-        self.start_conky()
-
-    def create_file(self):
-        path = '/tmp/'
-
-        if not os.path.exists(path):
-            os.makedirs(path)
-
         try:
-            filename = 'conky.conf'
-            with open(os.path.join(path, filename), 'w') as temp_file:
-                message = json.loads(self.data)['message']
-                print(message)
-                temp_file.write(str(message))
-            temp_file.close()
+
+            try:
+                if self.is_installed('conky') is False:
+                    self.logger.info('[Conky] Could not found Conky. It will be installed')
+                    self.logger.debug('[Conky] Conky installing with using apt-get')
+                    self.install_with_apt_get('conky')
+                    self.logger.info('[Conky] Could installed')
+
+                if len(self.Process.find_pids_by_name('conky')) > 0:
+                    self.logger.debug('[Conky] Some processes found which names are conky. They will be killed.')
+                    self.Process.kill_by_pids(self.Process.is_running('conky'))
+                    self.logger.debug('[Conky] Running conky processes were killed')
+            except:
+                self.logger.error('[Conky] Conky install-kill problem.')
+                raise
+
+            self.create_file('/tmp/conky.conf')
+            self.logger.debug('[Conky] Temp file was created.')
+
+            self.write_file('/tmp/conky.conf', json.loads(self.data)['message'])
+            self.logger.debug('[Conky] Temp file was filled by context.')
+
+            self.copy_file('/tmp/conky.conf', '/etc/conky/conky.conf')
+            self.logger.debug('[Conky] Configurated conf file.')
+            self.logger.debug('[Conky] Running Conky...')
+
+            self.execute(self.start_command, result=False)
+            self.logger.debug('[Conky] Creating response.')
+            self.context.create_response(code=self.get_message_code().POLICY_PROCESSED.value, message='Conky policy executed successfully')
         except Exception as e:
-            print(str(e))
-
-    def replace_conky_files(self):
-        process = self.context.execute('sudo cp  /tmp/conky.conf /etc/conky/conky.conf')
-        process.wait()
-
-
-    def start_conky(self):
-        process = self.context.execute(self.start_command)
-        process.wait()
+            self.logger.error('[Conky] A problem occurred while handling Conky policy. Error Message: {}'.format(str(e)))
+            self.context.create_response(code=self.get_message_code().POLICY_ERROR.value, message='A problem occurred while handling Conky policy')
 
 
 def handle_policy(profile_data, context):
-    print('CONKY PLUGIN')
+    print('[Conky] Handling...')
     plugin = Conky(profile_data, context)
     plugin.handle_policy()
-    print("This is policy file - CONKY")
+    print('[Conky] Executed.')

@@ -23,7 +23,6 @@
 		<property name="userOriented" value="${plugin.user.oriented}" />
 		<property name="policyPlugin" value="${plugin.policy.plugin}" />
 		<property name="xbased" value="${plugin.x.based}" />
-		<property name="distroUrl" value="${plugin.distro.url}" />
 	</bean>
 
 </blueprint>
