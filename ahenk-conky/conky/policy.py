@@ -14,7 +14,7 @@ class Conky(AbstractPlugin):
         self.context = context
         self.logger = self.get_logger()
         self.conky_config_file = '/etc/conky/conky.conf'
-        self.start_command = 'conky'
+        self.start_command = "su - {} -c 'conky'"
         self.logger.debug('[Conky] Parameters were initialized.')
 
     def handle_policy(self):
@@ -27,10 +27,8 @@ class Conky(AbstractPlugin):
                     self.install_with_apt_get('conky')
                     self.logger.info('[Conky] Could installed')
 
-                if len(self.Process.find_pids_by_name('conky')) > 0:
-                    self.logger.debug('[Conky] Some processes found which names are conky. They will be killed.')
-                    self.Process.kill_by_pids(self.Process.is_running('conky'))
-                    self.logger.debug('[Conky] Running conky processes were killed')
+                self.logger.debug('[Conky] Some processes found which names are conky. They will be killed.')
+                self.execute('killall -9 conky')
             except:
                 self.logger.error('[Conky] Conky install-kill problem.')
                 raise
@@ -45,9 +43,13 @@ class Conky(AbstractPlugin):
             self.logger.debug('[Conky] Configurated conf file.')
             self.logger.debug('[Conky] Running Conky...')
 
-            self.execute(self.start_command, result=False)
-            self.logger.debug('[Conky] Creating response.')
-            self.context.create_response(code=self.get_message_code().POLICY_PROCESSED.value, message='Conky policy executed successfully')
+            if self.context.get('username') != None:
+                self.execute(self.start_command.format(self.context.get('username')), result=False)
+                self.logger.debug('[Conky] Creating response.')
+                self.context.create_response(code=self.get_message_code().POLICY_PROCESSED.value, message='Conky policy executed successfully')
+            else:
+                raise Exception('Username: None')
+
         except Exception as e:
             self.logger.error('[Conky] A problem occurred while handling Conky policy. Error Message: {}'.format(str(e)))
             self.context.create_response(code=self.get_message_code().POLICY_ERROR.value, message='A problem occurred while handling Conky policy')
