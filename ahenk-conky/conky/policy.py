@@ -14,7 +14,8 @@ class Conky(AbstractPlugin):
         self.context = context
         self.logger = self.get_logger()
         self.conky_config_file = '/etc/conky/conky.conf'
-        self.start_command = "su - {} -c 'conky'"
+        self.autostart_path = self.get_home_path() + '.config/autostart'
+        self.autorun_file_path = self.autostart_path + '/conky.desktop'
         self.logger.debug('[Conky] Parameters were initialized.')
 
     def handle_policy(self):
@@ -41,19 +42,40 @@ class Conky(AbstractPlugin):
 
             self.copy_file('/tmp/conky.conf', '/etc/conky/conky.conf')
             self.logger.debug('[Conky] Configurated conf file.')
-            self.logger.debug('[Conky] Running Conky...')
 
-            if self.context.get('username') != None:
-                self.execute(self.start_command.format(self.context.get('username')), result=False)
-                self.logger.debug('[Conky] Creating response.')
-                self.context.create_response(code=self.get_message_code().POLICY_PROCESSED.value, message='Conky policy executed successfully')
-            else:
-                raise Exception('Username: None')
+            self.logger.debug('[Conky] Creating autorun file...')
+            self.create_autorun_file()
+
+            self.logger.debug('[Conky] Creating response.')
+            self.context.create_response(code=self.get_message_code().POLICY_PROCESSED.value, message='Conky policy executed successfully')
+
 
         except Exception as e:
             self.logger.error('[Conky] A problem occurred while handling Conky policy. Error Message: {}'.format(str(e)))
             self.context.create_response(code=self.get_message_code().POLICY_ERROR.value, message='A problem occurred while handling Conky policy')
 
+    def create_autorun_file(self):
+
+        if self.is_exist(self.autostart_path) == False:
+            self.create_directory(self.autostart_path)
+
+        file_content = '[Desktop Entry]\n' \
+                        'Encoding=UTF-8 \n' \
+                        'Type=Application \n' \
+                        'Name=Conky \n' \
+                        'Comment=Conky Monitor \n' \
+                        'Exec=conky -d\n' \
+                        'StartupNotify=false \n' \
+                        'Terminal=false \n'
+
+        autorun_file = open(self.autorun_file_path, 'w')
+        autorun_file.write(file_content)
+        autorun_file.close()
+
+
+    def get_home_path(self):
+        # TODO get home path from util
+        return '/home/' + self.context.get('username') + '/'
 
 def handle_policy(profile_data, context):
     print('[Conky] Handling...')
