@@ -36,8 +36,10 @@ public class ConkyProfileDialog implements IProfileDialog {
 		lblMessage.setText(Messages.getString("MESSAGE"));
 
 		txtMessage = new Text(composite, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		txtMessage.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 100, 40));
-		txtMessage.setSize(SWT.FILL, SWT.FILL);
+		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, 100, 40);
+		data.heightHint = 100;
+		data.widthHint = 160;
+		txtMessage.setLayoutData(data);
 		txtMessage.setText(profile != null && profile.getProfileData() != null
 				&& profile.getProfileData().get(ConkyConstants.PARAMETERS.MESSAGE) != null
 						? profile.getProfileData().get(ConkyConstants.PARAMETERS.MESSAGE).toString() : DEFAULT_CONF);
