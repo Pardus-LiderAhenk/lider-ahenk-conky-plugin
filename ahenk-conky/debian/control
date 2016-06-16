@@ -10,4 +10,5 @@ Package: ahenk-conky
 Version: 1.0.0
 Architecture: any
 Depends: python3 (>= 3), conky, conky-all
-Description: LiderAhenk Conky Plugin, provides create remote conky configuration on Ahenks. 
+Description: Lider Ahenk Conky plugin
+
