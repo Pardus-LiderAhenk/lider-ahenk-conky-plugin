@@ -46,6 +46,14 @@ class Conky(AbstractPlugin):
             self.logger.debug('[Conky] Creating autorun file...')
             self.create_autorun_file()
 
+            try:
+                self.logger.debug('[Conky] Starting autorun...')
+                self.execute('conky -d -q', result=False)
+                self.logger.debug('[Conky] Autorun is OK.')
+            except Exception as e:
+                self.logger.error('[Conky] Conky execution problem.')
+                raise
+
             self.logger.debug('[Conky] Creating response.')
             self.context.create_response(code=self.get_message_code().POLICY_PROCESSED.value, message='Conky policy executed successfully')
 
