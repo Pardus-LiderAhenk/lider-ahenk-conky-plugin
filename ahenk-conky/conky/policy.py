@@ -13,8 +13,11 @@ class Conky(AbstractPlugin):
         self.data = data
         self.context = context
         self.logger = self.get_logger()
-        self.conky_config_file = '/etc/conky/conky.conf'
-        self.autostart_path = self.get_home_path() + '.config/autostart'
+        self.username = self.context.get('username')
+        self.home_path = '/home/' + self.username
+        self.conky_config_file_dir = self.home_path + '/.conky'
+        self.conky_config_file_path = self.conky_config_file_dir + '/conky.conf'
+        self.autostart_path = self.home_path + '/.config/autostart'
         self.autorun_file_path = self.autostart_path + '/conky.desktop'
         self.logger.debug('[Conky] Parameters were initialized.')
 
@@ -34,29 +37,39 @@ class Conky(AbstractPlugin):
                 self.logger.error('[Conky] Conky install-kill problem.')
                 raise
 
-            self.create_file('/tmp/conky.conf')
-            self.logger.debug('[Conky] Temp file was created.')
+            if self.is_exist(self.conky_config_file_dir) == True:
+                self.logger.debug('[Conky] Old config file will be deleted.')
+                self.delete_file(self.conky_config_file_path)
+            else :
+                self.logger.debug('[Conky] Creating directory for conky config at ' + self.conky_config_file_dir)
+                self.create_directory(self.conky_config_file_dir)
 
-            self.write_file('/tmp/conky.conf', json.loads(self.data)['message'])
-            self.logger.debug('[Conky] Temp file was filled by context.')
 
-            self.copy_file('/tmp/conky.conf', '/etc/conky/conky.conf')
-            self.logger.debug('[Conky] Configurated conf file.')
+            if self.create_file(self.conky_config_file_path) :
+                self.logger.debug('[Conky] Config file was created.')
 
-            self.logger.debug('[Conky] Creating autorun file...')
-            self.create_autorun_file()
+                self.write_file(self.conky_config_file_path, json.loads(self.data)['message'])
+                self.logger.debug('[Conky] Config file was filled by context.')
 
-            try:
-                self.logger.debug('[Conky] Starting autorun...')
-                self.execute('conky -d -q', result=False)
-                self.logger.debug('[Conky] Autorun is OK.')
-            except Exception as e:
-                self.logger.error('[Conky] Conky execution problem.')
-                raise
+                try:
+                    self.logger.debug('[Conky] Creating autorun file...')
+                    self.create_autorun_file()
+                    self.logger.debug('[Conky] Executing conky with command : su ' + self.username + ' -c "conky -d -c ' + self.conky_config_file_path + '"')
+                    self.execute('su ' + self.username + ' -c "conky -d -c ' + self.conky_config_file_path + '"', result=False)
+                    self.logger.debug('[Conky] Autorun is OK.')
+                except Exception as e:
+                    self.logger.error('[Conky] Conky autorun problem.')
+                    raise
 
-            self.logger.debug('[Conky] Creating response.')
-            self.context.create_response(code=self.get_message_code().POLICY_PROCESSED.value, message='Conky policy executed successfully')
+                change_owner = 'chown -hR ' + self.username + ':' + self.username + ' ' + self.conky_config_file_dir
+                self.execute(change_owner)
+                self.logger.info('[Conky] Owner of Conky config file was changed.')
 
+                self.context.create_response(code=self.get_message_code().POLICY_PROCESSED.value, message='Conky policy executed successfully')
+
+            else:
+                self.logger.error('[Conky] Conky config file could not be created.')
+                self.context.create_response(code=self.get_message_code().POLICY_ERROR.value, message='Conky config file could not be created.')
 
         except Exception as e:
             self.logger.error('[Conky] A problem occurred while handling Conky policy. Error Message: {}'.format(str(e)))
@@ -72,7 +85,7 @@ class Conky(AbstractPlugin):
                         'Type=Application \n' \
                         'Name=Conky \n' \
                         'Comment=Conky Monitor \n' \
-                        'Exec=conky -d\n' \
+                        'Exec=conky -d -c ' + self.conky_config_file_path + '\n' \
                         'StartupNotify=false \n' \
                         'Terminal=false \n'
 
@@ -80,10 +93,6 @@ class Conky(AbstractPlugin):
         autorun_file.write(file_content)
         autorun_file.close()
 
-
-    def get_home_path(self):
-        # TODO get home path from util
-        return '/home/' + self.context.get('username') + '/'
 
 def handle_policy(profile_data, context):
     print('[Conky] Handling...')
