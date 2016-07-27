@@ -65,15 +65,15 @@ class Conky(AbstractPlugin):
                 self.execute(change_owner)
                 self.logger.info('[Conky] Owner of Conky config file was changed.')
 
-                self.context.create_response(code=self.get_message_code().POLICY_PROCESSED.value, message='Conky policy executed successfully')
+                self.context.create_response(code=self.get_message_code().POLICY_PROCESSED.value, message='Conky politikası başarıyla çalıştırıldı.')
 
             else:
                 self.logger.error('[Conky] Conky config file could not be created.')
-                self.context.create_response(code=self.get_message_code().POLICY_ERROR.value, message='Conky config file could not be created.')
+                self.context.create_response(code=self.get_message_code().POLICY_ERROR.value, message='Conky konfigürasyon dosyası oluşturulamadı.')
 
         except Exception as e:
             self.logger.error('[Conky] A problem occurred while handling Conky policy. Error Message: {}'.format(str(e)))
-            self.context.create_response(code=self.get_message_code().POLICY_ERROR.value, message='A problem occurred while handling Conky policy')
+            self.context.create_response(code=self.get_message_code().POLICY_ERROR.value, message='Conky politikası uygulanırken bir hata oluştu.')
 
     def create_autorun_file(self):
 
