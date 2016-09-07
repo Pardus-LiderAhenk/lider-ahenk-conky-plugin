@@ -90,4 +90,10 @@
   		<policyItem label="%command.profile" pluginName="conky" pluginVersion="1.0.0" profileCommandId="tr.org.liderahenk.liderconsole.commands.ConkyProfile" />
   	</extension>
   	
+	<!-- Add extension point contribution for i18n messages -->
+	<extension
+  		point="tr.org.liderahenk.liderconsole.core.i18n">
+		<plugin name="conky" label="%plugin.label" />
+  	</extension>
+  	
 </plugin>
