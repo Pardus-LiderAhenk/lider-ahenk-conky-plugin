@@ -69,7 +69,6 @@ class Conky(AbstractPlugin):
             self.initialize_auto_run()
 
             if self.machine_profile is False:
-                print(self.command_autorun_conky.format('--display=' + self.Sessions.display(self.username),self.conky_config_file_path))
                 self.execute(
                     self.command_autorun_conky.format('--display=' + self.Sessions.display(self.username),
                                                       self.conky_config_file_path),
