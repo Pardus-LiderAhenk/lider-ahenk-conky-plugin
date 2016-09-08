@@ -5,7 +5,7 @@ Conky (desktop image) plugin for [Lider Ahenk project](http://www.liderahenk.org
 |                   | **user-oriented** | **machine-oriented** |
 |:-----------------:|:-----------------:|:--------------------:|
 | **task plugin**   |                   |                      |
-| **policy plugin** |         x         |                      |
+| **policy plugin** |         x         |         x            |
 
 ## How to Build
 
