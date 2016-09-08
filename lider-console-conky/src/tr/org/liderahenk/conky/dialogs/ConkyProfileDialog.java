@@ -18,7 +18,7 @@ import tr.org.liderahenk.liderconsole.core.model.Profile;
 
 public class ConkyProfileDialog implements IProfileDialog {
 
-	private static final String DEFAULT_CONF = "alignment top_left\r\nbackground no\r\nborder_width 1\r\ncpu_avg_samples 2\r\ndefault_color white\r\ndefault_outline_color white\r\ndefault_shade_color white\r\ndraw_borders no\r\ndraw_graph_borders yes\r\ndraw_outline no\r\ndraw_shades no\r\nuse_xft yes\r\nxftfont DejaVu Sans Mono:size=12\r\ngap_x 5\r\ngap_y 60\r\nminimum_size 5 5\r\nnet_avg_samples 2\r\nno_buffers yes\r\nout_to_console no\r\nout_to_stderr no\r\nextra_newline no\r\nown_window yes\r\nown_window_class Conky\r\nown_window_type desktop\r\nstippled_borders 0\r\nupdate_interval 1.0\r\nuppercase no\r\nuse_spacer none\r\nshow_graph_scale no\r\nshow_graph_range no\r\n\r\nTEXT\r\nLider Ahenk Masa\u00FCst\u00FC Arkaplan Eklentisi v1.0.0";
+	private static final String DEFAULT_CONF = "alignment bottom_right\nbackground yes\nown_window yes\nown_window_type normal\nown_window_class conky\nown_window_hints undecorated,skip_taskbar,skip_pager,sticky,below\nown_window_argb_visual yes\nown_window_transparent yes\n\nTEXT\nLIDER AHENK";
 
 	private Text txtMessage;
 

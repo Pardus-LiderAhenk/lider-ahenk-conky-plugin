@@ -2,20 +2,15 @@ package tr.org.liderahenk.conky.commands;
 
 import java.util.ArrayList;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import tr.org.liderahenk.conky.plugininfo.PluginInfoImpl;
 import tr.org.liderahenk.lider.core.api.plugin.ICommand;
 import tr.org.liderahenk.lider.core.api.service.ICommandContext;
 import tr.org.liderahenk.lider.core.api.service.ICommandResult;
 import tr.org.liderahenk.lider.core.api.service.ICommandResultFactory;
 import tr.org.liderahenk.lider.core.api.service.enums.CommandResultStatus;
-import tr.org.liderahenk.conky.plugininfo.PluginInfoImpl;
 
 public class ConkyCommand implements ICommand {
 
-	private Logger logger = LoggerFactory.getLogger(ConkyCommand.class);
-	
 	private ICommandResultFactory resultFactory;
 	private PluginInfoImpl pluginInfo;
 
@@ -43,7 +38,7 @@ public class ConkyCommand implements ICommand {
 	public void setResultFactory(ICommandResultFactory resultFactory) {
 		this.resultFactory = resultFactory;
 	}
-	
+
 	public void setPluginInfo(PluginInfoImpl pluginInfo) {
 		this.pluginInfo = pluginInfo;
 	}
@@ -57,5 +52,5 @@ public class ConkyCommand implements ICommand {
 	public String getPluginVersion() {
 		return pluginInfo.getPluginVersion();
 	}
-	
+
 }

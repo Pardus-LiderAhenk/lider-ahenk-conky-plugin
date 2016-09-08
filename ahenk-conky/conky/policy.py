@@ -23,7 +23,6 @@ class Conky(AbstractPlugin):
 
     def handle_policy(self):
         try:
-
             try:
                 if self.is_installed('conky') is False:
                     self.logger.info('[Conky] Could not found Conky. It will be installed')
@@ -37,17 +36,15 @@ class Conky(AbstractPlugin):
                 self.logger.error('[Conky] Conky install-kill problem.')
                 raise
 
-            if self.is_exist(self.conky_config_file_dir) == True:
+            if self.is_exist(self.conky_config_file_dir):
                 self.logger.debug('[Conky] Old config file will be deleted.')
                 self.delete_file(self.conky_config_file_path)
-            else :
+            else:
                 self.logger.debug('[Conky] Creating directory for conky config at ' + self.conky_config_file_dir)
                 self.create_directory(self.conky_config_file_dir)
 
-
-            if self.create_file(self.conky_config_file_path) :
+            if self.create_file(self.conky_config_file_path):
                 self.logger.debug('[Conky] Config file was created.')
-
                 self.write_file(self.conky_config_file_path, json.loads(self.data)['message'])
                 self.logger.debug('[Conky] Config file was filled by context.')
 
@@ -57,7 +54,7 @@ class Conky(AbstractPlugin):
                     self.logger.debug('[Conky] Executing conky with command : su ' + self.username + ' -c "conky -d -c ' + self.conky_config_file_path + '"')
                     self.execute('su ' + self.username + ' -c "conky -d -c ' + self.conky_config_file_path + '"', result=False)
                     self.logger.debug('[Conky] Autorun is OK.')
-                except Exception as e:
+                except:
                     self.logger.error('[Conky] Conky autorun problem.')
                     raise
 
@@ -66,7 +63,6 @@ class Conky(AbstractPlugin):
                 self.logger.info('[Conky] Owner of Conky config file was changed.')
 
                 self.context.create_response(code=self.get_message_code().POLICY_PROCESSED.value, message='Conky politikası başarıyla çalıştırıldı.')
-
             else:
                 self.logger.error('[Conky] Conky config file could not be created.')
                 self.context.create_response(code=self.get_message_code().POLICY_ERROR.value, message='Conky konfigürasyon dosyası oluşturulamadı.')
@@ -76,8 +72,7 @@ class Conky(AbstractPlugin):
             self.context.create_response(code=self.get_message_code().POLICY_ERROR.value, message='Conky politikası uygulanırken bir hata oluştu.')
 
     def create_autorun_file(self):
-
-        if self.is_exist(self.autostart_path) == False:
+        if not self.is_exist(self.autostart_path):
             self.create_directory(self.autostart_path)
 
         file_content = '[Desktop Entry]\n' \
@@ -88,14 +83,11 @@ class Conky(AbstractPlugin):
                         'Exec=conky -d -c ' + self.conky_config_file_path + '\n' \
                         'StartupNotify=false \n' \
                         'Terminal=false \n'
-
         autorun_file = open(self.autorun_file_path, 'w')
         autorun_file.write(file_content)
         autorun_file.close()
 
 
 def handle_policy(profile_data, context):
-    print('[Conky] Handling...')
     plugin = Conky(profile_data, context)
     plugin.handle_policy()
-    print('[Conky] Executed.')
