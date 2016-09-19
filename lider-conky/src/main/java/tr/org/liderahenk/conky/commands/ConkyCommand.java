@@ -2,6 +2,9 @@ package tr.org.liderahenk.conky.commands;
 
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import tr.org.liderahenk.conky.plugininfo.PluginInfoImpl;
 import tr.org.liderahenk.lider.core.api.plugin.ICommand;
 import tr.org.liderahenk.lider.core.api.service.ICommandContext;
@@ -11,11 +14,15 @@ import tr.org.liderahenk.lider.core.api.service.enums.CommandResultStatus;
 
 public class ConkyCommand implements ICommand {
 
+	private Logger logger = LoggerFactory.getLogger(ConkyCommand.class);
 	private ICommandResultFactory resultFactory;
 	private PluginInfoImpl pluginInfo;
 
 	@Override
 	public ICommandResult execute(ICommandContext context) {
+		
+		logger.debug("Execute method working.");
+		
 		ICommandResult commandResult = resultFactory.create(CommandResultStatus.OK, new ArrayList<String>(), this);
 		return commandResult;
 	}
@@ -27,7 +34,7 @@ public class ConkyCommand implements ICommand {
 
 	@Override
 	public String getCommandId() {
-		return "conky";
+		return "execute_conky";
 	}
 
 	@Override
