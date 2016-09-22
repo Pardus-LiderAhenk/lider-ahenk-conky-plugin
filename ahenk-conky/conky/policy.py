@@ -33,10 +33,7 @@ class Conky(AbstractPlugin):
 
             # Killing conky processes
             self.logger.debug('[Conky] Conky named processes will be killed.')
-            result_code, p_out, p_err = self.execute('killall -9 conky')
-            # if result_code != 0:
-            #     self.logger.error('[Conky] Conky kill command not worked properly.')
-            #     raise Exception
+            self.execute('killall -9 conky')
 
             # Is user profile
             if 'username' in self.context.data and self.context.get('username') is not None:
