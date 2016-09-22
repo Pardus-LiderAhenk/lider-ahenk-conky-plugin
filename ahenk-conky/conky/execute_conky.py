@@ -107,7 +107,7 @@ class RunConkyCommand(AbstractPlugin):
         for user in users:
             user_display = self.Sessions.display(user)
             if user_display is None:
-                self.logger.debug('[Conky] executing for display none ')
+                self.logger.debug('[Conky] executing for display none for user  '+ str(user))
                 self.execute('conky -q', result=False)
             else :
                 self.logger.debug('[Conky] user display ' + str(user_display) +' user '+ str(user))
