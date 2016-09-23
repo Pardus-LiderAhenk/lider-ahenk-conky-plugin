@@ -1,40 +1,36 @@
 package tr.org.liderahenk.conky.dialogs;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
-import org.osgi.service.event.Event;
-import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tr.org.liderahenk.conky.i18n.Messages;
+import tr.org.liderahenk.conky.constants.ConkyConstants;
 import tr.org.liderahenk.liderconsole.core.dialogs.DefaultTaskDialog;
 import tr.org.liderahenk.liderconsole.core.exceptions.ValidationException;
-import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
-import tr.org.liderahenk.liderconsole.core.xmpp.notifications.TaskStatusNotification;
+import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 
 /**
  *
@@ -46,9 +42,10 @@ public class ConkyTaskCommandDialog extends DefaultTaskDialog {
 	private Text textMessage;
 	private Button btnCheckButtonConkyMessage;
 	private Table table;
+	private Combo cmbSampleConfigs;
 	
 	private static final String DEFAULT_SETTING = ""
-			+ "alignment top_left\r"
+			+ "alignment top_right\r"
 			+ "\nbackground yes\r"
 			+ "\nborder_width 1\r"
 			+ "\ncpu_avg_samples 2\r"
@@ -92,7 +89,7 @@ public class ConkyTaskCommandDialog extends DefaultTaskDialog {
 	
 	@Override
 	protected Point getInitialSize() {
-		return new Point(650, 620);
+		return new Point(650, 650);
 	}
 
 	
@@ -117,12 +114,42 @@ public class ConkyTaskCommandDialog extends DefaultTaskDialog {
 		tbtmNewItem.setControl(textMessage);
 		textMessage.setSize(new Point(24, 24));
 		
-		TabItem tbtmNewItem_1 = new TabItem(tabFolder, SWT.NONE);
-		tbtmNewItem_1.setText("Masaüstü Mesaj Görünüm ayarları");
+		TabItem tbtmSettings = new TabItem(tabFolder, SWT.NONE);
+		tbtmSettings.setText("Masaüstü Mesaj Görünüm ayarları");
 		
-		textSettings = new Text(tabFolder, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL );
-		tbtmNewItem_1.setControl(textSettings);
+		
+		Composite composite = new Composite(tabFolder, SWT.NONE );
+		tbtmSettings.setControl(composite);
+		composite.setLayout(new GridLayout(2, false));
+		
+		
+		Label lblNewLabel = new Label(composite, SWT.NONE);
+		lblNewLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblNewLabel.setText("Şablon Seç");
+		
+		cmbSampleConfigs = new Combo(composite, SWT.NONE);
+		cmbSampleConfigs.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		cmbSampleConfigs.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				handleSelection();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		
+		populateConfigs();
+		
+		textSettings = new Text(composite, SWT.BORDER | SWT.MULTI  |SWT.H_SCROLL | SWT.V_SCROLL);
+		textSettings.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 		textSettings.setText(DEFAULT_SETTING);
+		
+//		textSettings = new Text(tabFolder, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL );
+//		tbtmNewItem_1.setControl(textSettings);
+//		textSettings.setText(DEFAULT_SETTING);
 		
 //		table = new Table(tabFolder, SWT.FULL_SELECTION | SWT.CHECK | SWT.BORDER | SWT.V_SCROLL  | SWT.H_SCROLL);
 //		    
@@ -150,7 +177,7 @@ public class ConkyTaskCommandDialog extends DefaultTaskDialog {
 
 	@Override
 	public void validateBeforeExecution() throws ValidationException {
-		if(textMessage.getText().equals("") || textSettings.getText().equals("")) throw new ValidationException("Please fill required fields.");
+		if(textSettings.getText().equals("")) throw new ValidationException("Please fill required fields.");
 		
 		}
 	
@@ -187,43 +214,69 @@ public class ConkyTaskCommandDialog extends DefaultTaskDialog {
 		return "1.0.0";
 	}
 	
-	private EventHandler taskStatusNotificationHandler = new EventHandler() {
-		@Override
-		public void handleEvent(final Event event) {
-			Job job = new Job("TASK") {
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					monitor.beginTask("EDIP", 100);
-					try {
-						TaskStatusNotification taskStatus = (TaskStatusNotification) event
-								.getProperty("org.eclipse.e4.data");
-						byte[] data = taskStatus.getResult().getResponseData();
-						final Map<String, Object> responseData = new ObjectMapper().readValue(data, 0, data.length,
-								new TypeReference<HashMap<String, Object>>() {
-								});
-						Display.getDefault().asyncExec(new Runnable() {
-
-							@Override
-							public void run() {
-								
-								
-								
-							}
-						});
-					} catch (Exception e) {
-						logger.error(e.getMessage(), e);
-						Notifier.error("", Messages.getString("ERROR"));
-					}
-					monitor.worked(100);
-					monitor.done();
-
-					return Status.OK_STATUS;
-				}
-			};
-
-			job.setUser(true);
-			job.schedule();
-		}
-	};
 	
+	
+	private void populateConfigs() {
+		try {
+			String path = SWTResourceManager.getAbsolutePath(ConkyConstants.PLUGIN_ID.CONKY, "conf/");
+			if (path != null) {
+				File file = new File(path);
+				if (file.isDirectory()) {
+					File[] configs = file.listFiles();
+					if (configs != null) {
+					
+						for (int i = 0; i < configs.length; i++) {
+							File config = configs[i];
+							BufferedReader br = null;
+							try {
+								br = new BufferedReader(new FileReader(config));
+								boolean firstLine = true;
+								StringBuilder contents = new StringBuilder();
+								String line = null;
+								while ((line = br.readLine()) != null) {
+									if (firstLine) {
+										cmbSampleConfigs.add(line.replace("#", "").trim());
+										firstLine = false;
+									}
+									contents.append(line);
+									contents.append("\n");
+								}
+								cmbSampleConfigs.setData(i + "", contents);
+								
+							} catch (Exception e1) {
+								logger.error(e1.getMessage(), e1);
+							} finally {
+								if (br != null) {
+									try {
+										br.close();
+									} catch (IOException e) {
+										e.printStackTrace();
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+	}
+	
+	
+	protected String getSelectedSampleConfig() {
+		int selectionIndex = cmbSampleConfigs.getSelectionIndex();
+		if (selectionIndex > -1 && cmbSampleConfigs.getItem(selectionIndex) != null
+				&& cmbSampleConfigs.getData(selectionIndex + "") != null) {
+			return cmbSampleConfigs.getData(selectionIndex + "").toString();
+		}
+		return null;
+	}
+	
+	protected void handleSelection() {
+		String content = getSelectedSampleConfig();
+		if (content != null && !content.isEmpty()) {
+			textSettings.setText(content);
+		}
+	}
 }
