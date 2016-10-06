@@ -22,12 +22,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.conky.constants.ConkyConstants;
+import tr.org.liderahenk.conky.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.dialogs.DefaultTaskDialog;
 import tr.org.liderahenk.liderconsole.core.exceptions.ValidationException;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
@@ -41,7 +41,6 @@ public class ConkyTaskCommandDialog extends DefaultTaskDialog {
 	private Text textSettings;
 	private Text textMessage;
 	private Button btnCheckButtonConkyMessage;
-	private Table table;
 	private Combo cmbSampleConfigs;
 	
 	private static final String DEFAULT_SETTING = ""
@@ -81,10 +80,7 @@ public class ConkyTaskCommandDialog extends DefaultTaskDialog {
 
 	
 	public ConkyTaskCommandDialog(Shell parentShell, Set<String> dnSet) {
-		
 		super(parentShell, dnSet);
-		
-		//subscribeEventHandler(taskStatusNotificationHandler);
 	}
 	
 	@Override
@@ -95,27 +91,37 @@ public class ConkyTaskCommandDialog extends DefaultTaskDialog {
 	
 	@Override
 	public String createTitle() {
-		return "Masaüstü Mesajı (ULAK) ";
+		return Messages.getString("TITLE");
 	}
 
 	@Override
 	public Control createTaskDialogArea(Composite container) {
 		
 		btnCheckButtonConkyMessage = new Button(container, SWT.CHECK);
-		btnCheckButtonConkyMessage.setText("Masaüstü Mesajlarını Kaldır");
+		btnCheckButtonConkyMessage.setText(Messages.getString("REMOVE_MESSAGE"));
+		btnCheckButtonConkyMessage.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				textMessage.setEnabled(!btnCheckButtonConkyMessage.getSelection());
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
 		
 		TabFolder tabFolder = new TabFolder(container, SWT.NONE);
 		tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1));
 		
 		TabItem tbtmNewItem = new TabItem(tabFolder, SWT.NONE);
-		tbtmNewItem.setText("Masaüstü Mesaj İçeriği");
+		tbtmNewItem.setText(Messages.getString("CONTENT"));
 		
 		textMessage = new Text(tabFolder, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL );
 		tbtmNewItem.setControl(textMessage);
 		textMessage.setSize(new Point(24, 24));
 		
 		TabItem tbtmSettings = new TabItem(tabFolder, SWT.NONE);
-		tbtmSettings.setText("Masaüstü Mesaj Görünüm ayarları");
+		tbtmSettings.setText(Messages.getString("VIEW_SETTINGS"));
 		
 		
 		Composite composite = new Composite(tabFolder, SWT.NONE );
@@ -125,7 +131,7 @@ public class ConkyTaskCommandDialog extends DefaultTaskDialog {
 		
 		Label lblNewLabel = new Label(composite, SWT.NONE);
 		lblNewLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblNewLabel.setText("Şablon Seç");
+		lblNewLabel.setText(Messages.getString("CHOOSE_TEMPLATE"));
 		
 		cmbSampleConfigs = new Combo(composite, SWT.NONE);
 		cmbSampleConfigs.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -177,41 +183,39 @@ public class ConkyTaskCommandDialog extends DefaultTaskDialog {
 
 	@Override
 	public void validateBeforeExecution() throws ValidationException {
-		if(textSettings.getText().equals("")) throw new ValidationException("Please fill required fields.");
-		
-		}
+		if(textSettings.getText().equals("")) throw new ValidationException(Messages.getString("FILL_FIELDS"));
+	}
 	
 	@Override
 	public Map<String, Object> getParameterMap() {
-		Map<String, Object>  map= new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		
-		String conkyMessage= textSettings.getText() + textMessage.getText();
+		String conkyMessage = textSettings.getText() + textMessage.getText();
 		
-		Boolean removeConkyMessage=false;
+		Boolean removeConkyMessage = false;
 		if(btnCheckButtonConkyMessage.getSelection()){
-			removeConkyMessage=true;
+			removeConkyMessage = true;
 		}
 		
-		map.put("conkyMessage", conkyMessage );
-		map.put("removeConkyMessage", removeConkyMessage );
+		map.put(ConkyConstants.PARAMETERS.CONKY_MESSAGE, conkyMessage );
+		map.put(ConkyConstants.PARAMETERS.REMOVE_CONKY_MESSAGE, removeConkyMessage );
 		
 		return map;
 	}
 
 	@Override
 	public String getCommandId() {
-		// TODO command id which is used to match tasks with ICommand class in the corresponding Lider plugin
-		return "execute_conky";
+		return "EXECUTE_CONKY";
 	}
 
 	@Override
 	public String getPluginName() {
-		return "conky";
+		return ConkyConstants.PLUGIN_NAME;
 	}
 
 	@Override
 	public String getPluginVersion() {
-		return "1.0.0";
+		return ConkyConstants.PLUGIN_VERSION;
 	}
 	
 	
