@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tr.org.liderahenk.conky.plugininfo.PluginInfoImpl;
 import tr.org.liderahenk.lider.core.api.plugin.ICommand;
+import tr.org.liderahenk.lider.core.api.plugin.IPluginInfo;
 import tr.org.liderahenk.lider.core.api.service.ICommandContext;
 import tr.org.liderahenk.lider.core.api.service.ICommandResult;
 import tr.org.liderahenk.lider.core.api.service.ICommandResultFactory;
@@ -16,7 +16,7 @@ public class ConkyCommand implements ICommand {
 
 	private Logger logger = LoggerFactory.getLogger(ConkyCommand.class);
 	private ICommandResultFactory resultFactory;
-	private PluginInfoImpl pluginInfo;
+	private IPluginInfo pluginInfo;
 
 	@Override
 	public ICommandResult execute(ICommandContext context) {
@@ -34,22 +34,14 @@ public class ConkyCommand implements ICommand {
 
 	@Override
 	public String getCommandId() {
-		return "execute_conky";
+		return "EXECUTE_CONKY";
 	}
 
 	@Override
 	public Boolean executeOnAgent() {
 		return true;
 	}
-
-	public void setResultFactory(ICommandResultFactory resultFactory) {
-		this.resultFactory = resultFactory;
-	}
-
-	public void setPluginInfo(PluginInfoImpl pluginInfo) {
-		this.pluginInfo = pluginInfo;
-	}
-
+	
 	@Override
 	public String getPluginName() {
 		return pluginInfo.getPluginName();
@@ -60,4 +52,11 @@ public class ConkyCommand implements ICommand {
 		return pluginInfo.getPluginVersion();
 	}
 
+	public void setResultFactory(ICommandResultFactory resultFactory) {
+		this.resultFactory = resultFactory;
+	}
+	
+	public void setPluginInfo(IPluginInfo pluginInfo) {
+		this.pluginInfo = pluginInfo;
+	}
 }

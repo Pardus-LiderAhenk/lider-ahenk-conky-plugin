@@ -10,6 +10,13 @@
 	<cm:property-placeholder persistent-id="tr.org.liderahenk.conky"
 		update-strategy="reload">
 	</cm:property-placeholder>
+	
+	<!-- ICommand implementation is used to process a task execution -->
+	<service ref="ConkyCommand" interface="tr.org.liderahenk.lider.core.api.plugin.ICommand" />
+	<bean id="ConkyCommand" class="tr.org.liderahenk.conky.commands.ConkyCommand">
+		<property name="resultFactory" ref="resultFactory" />
+		<property name="pluginInfo" ref="pluginInfoImpl" />
+	</bean>
 
 	<!-- IPluginInfo implementation is used to register plugin -->
 	<service ref="pluginInfoImpl"
@@ -27,14 +34,5 @@
 		<property name="xbased" value="${plugin.x.based}" />
 	</bean>
 	
-	<!-- ICommand implementation is used to process a task execution -->
-	<service ref="conkyCommand" interface="tr.org.liderahenk.lider.core.api.plugin.ICommand" />
-	<bean id="conkyCommand" class="tr.org.liderahenk.conky.commands.ConkyCommand">
-		<property name="resultFactory" ref="resultFactory" />
-		<property name="pluginInfo" ref="pluginInfoImpl" />
-	</bean>
-	
 	<reference id="resultFactory" interface="tr.org.liderahenk.lider.core.api.service.ICommandResultFactory" />
-	
-
 </blueprint>
