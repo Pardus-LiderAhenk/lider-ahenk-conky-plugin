@@ -42,8 +42,10 @@ public class ConkyProfileDialog implements IProfileDialog {
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(2, false));
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
+		GridData gData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gData.widthHint = 800;
+		gData.heightHint = 600;
+		composite.setLayoutData(gData);
 		// Sample Configs
 		Label lblSampleConfigs = new Label(composite, SWT.NONE);
 		lblSampleConfigs.setText(Messages.getString("SAMPLE_CONFIGS"));
