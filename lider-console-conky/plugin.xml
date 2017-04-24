@@ -142,7 +142,8 @@
   	
   	<extension
   		point="tr.org.liderahenk.liderconsole.core.taskmenu">
-  		<taskItem label="%command.task" pluginName="conky" pluginVersion="1.0.0" taskCommandId="tr.org.liderahenk.liderconsole.commands.ConkyTask" selectionType="multi" description="Conky masaüstü uygulaması ile metin tabanlı bilgilerin kullanıcının masaüstünde görülmesini sağlar.&#xA;Mesaj iletmek için tıklayınız.." />
+  		<taskItem label="%command.task" pluginName="conky" pluginVersion="1.0.0" taskCommandId="tr.org.liderahenk.liderconsole.commands.ConkyTask" selectionType="multi" description="Conky masaüstü uygulaması ile metin tabanlı bilgilerin kullanıcının masaüstünde görülmesini sağlar.&#xA;Mesaj iletmek için tıklayınız.." 
+  		imagePath="conky.png"/>
   	</extension>
   	
 	<!-- Add extension point contribution for i18n messages -->
