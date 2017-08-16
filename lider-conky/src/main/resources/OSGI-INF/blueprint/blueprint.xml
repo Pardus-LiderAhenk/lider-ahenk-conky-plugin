@@ -17,6 +17,15 @@
 		<property name="resultFactory" ref="resultFactory" />
 		<property name="pluginInfo" ref="pluginInfoImpl" />
 	</bean>
+	
+
+	<!-- ICommand implementation is used to process a xmessage task execution -->
+	<service ref="XMessageCommand" interface="tr.org.liderahenk.lider.core.api.plugin.ICommand" />
+	<bean id="XMessageCommand" class="tr.org.liderahenk.conky.commands.XMessageCommand">
+		<property name="resultFactory" ref="resultFactory" />
+		<property name="pluginInfo" ref="pluginInfoImpl" />
+	</bean>
+	
 
 	<!-- IPluginInfo implementation is used to register plugin -->
 	<service ref="pluginInfoImpl"
