@@ -4,7 +4,7 @@
 
 
 from base.model.enum.content_type import ContentType
-import json
+import json, threading
 
 from base.plugin.abstract_plugin import AbstractPlugin
 
@@ -37,10 +37,11 @@ class RunXMessageCommand(AbstractPlugin):
                 self.logger.debug('[XMessage] user display ' + str(user_display) +' user '+ str(user))
 
                 if user_ip is None:
-                    self.execute(" xmessage -nearmouse -buttons Tamam -timeout "+ str(timeout) + " "+str(message))
+                    t = threading.Thread(target=self.execute(" xmessage -nearmouse -buttons Tamam -timeout "+ str(timeout) + " "+str(message)))
+                    t.start()
                 else:
-                    self.execute(self.xmessage_command.format(user, user_display,user,message), ip=user_ip)
-
+                    t = threading.Thread(target=self.execute(self.xmessage_command.format(user, user_display,user,message), ip=user_ip))
+                    t.start()
 
         self.context.create_response(code=self.message_code.TASK_PROCESSED.value,
                                      message='İşlem başarıyla gerçekleştirildi.',
