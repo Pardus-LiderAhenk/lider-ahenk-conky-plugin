@@ -5,9 +5,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -105,6 +102,8 @@ public class SendMessageTaskDialog extends DefaultTaskDialog{
 		
 		String message = textMessage.getText();
 		String timeout=comboTimeout.getText();
+		
+		message= message.replace('\n', ' ');
 		
 		map.put("message", message );
 		map.put("timeout", timeout );
