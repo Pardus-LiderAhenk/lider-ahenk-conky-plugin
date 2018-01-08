@@ -33,7 +33,7 @@ Conky (desktop image) plugin for [Lider Ahenk project](http://www.liderahenk.org
 
 #### Ahenk
 
-1. Create a soft link for _ahenk-conky/conky_ directory via `sudo ln -s lider-ahenk-conky-plugin/ahenk-conky/conky/ /opt/ahenk/plugins`
+1. Create a soft link for _ahenk-conky/conky_ directory via `sudo ln -s lider-ahenk-conky-plugin/ahenk-conky/conky/ /usr/share/ahenk/plugins`
 
 ## Contribution
 
