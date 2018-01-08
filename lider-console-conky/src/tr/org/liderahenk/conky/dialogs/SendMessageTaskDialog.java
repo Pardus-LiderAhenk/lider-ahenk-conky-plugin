@@ -26,9 +26,13 @@ public class SendMessageTaskDialog extends DefaultTaskDialog{
 	private Label label;
 	private Combo comboTimeout;
 	private Label lblNewLabel;
+	
+	private String selectedUserDn;
 
-	public SendMessageTaskDialog(Shell parentShell, Set<String> dnSet) {
+	public SendMessageTaskDialog(Shell parentShell, Set<String> dnSet,  String user) {
 		super(parentShell, dnSet);
+		
+		this.selectedUserDn=user;
 		
 	}
 
@@ -51,23 +55,24 @@ public class SendMessageTaskDialog extends DefaultTaskDialog{
         lblMessage.setText(Messages.getString("MESSAGE")); //$NON-NLS-1$
         
         textMessage = new Text(composite, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
-        GridData gd_text = new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1);
+        GridData gd_text = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
         gd_text.heightHint = 82;
+       // gd_text.widthHint = 282;
         textMessage.setLayoutData(gd_text);
         
         
-        label = new Label(composite, SWT.NONE);
-        label.setText(Messages.getString("TIMEOUT"));
+//        label = new Label(composite, SWT.NONE);
+//        label.setText(Messages.getString("TIMEOUT"));
         
-        comboTimeout = new Combo(composite, SWT.NONE);
-        GridData gd_comboTimeout = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-        gd_comboTimeout.widthHint = 83;
-        comboTimeout.setLayoutData(gd_comboTimeout);
-        createTimeoutCombo(comboTimeout);
+//        comboTimeout = new Combo(composite, SWT.NONE);
+//        GridData gd_comboTimeout = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+//        gd_comboTimeout.widthHint = 83;
+//        comboTimeout.setLayoutData(gd_comboTimeout);
+//        createTimeoutCombo(comboTimeout);
         
-        lblNewLabel = new Label(composite, SWT.NONE);
-        lblNewLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
-        lblNewLabel.setText(Messages.getString("sn"));
+//        lblNewLabel = new Label(composite, SWT.NONE);
+//        lblNewLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+//        lblNewLabel.setText(Messages.getString("sn"));
 		
 		return composite;
 	
@@ -100,13 +105,28 @@ public class SendMessageTaskDialog extends DefaultTaskDialog{
 	public Map<String, Object> getParameterMap() {
 		Map<String, Object> map = new HashMap<>();
 		
+		if(selectedUserDn!=null){
+			
+			String[] selectedUserDnArr=selectedUserDn.split(",");
+			
+			if(selectedUserDnArr.length>0){
+				String[] selectedUserArr= selectedUserDnArr[0].split("=");
+				
+				if(selectedUserArr.length>1){
+					
+					String selectedUser= selectedUserArr[1];
+					map.put("selected_user",selectedUser );
+				}
+			}
+		}
+		
 		String message = textMessage.getText();
-		String timeout=comboTimeout.getText();
+	//	String timeout = comboTimeout.getText();
 		
 		message= message.replace('\n', ' ');
 		
 		map.put("message", message );
-		map.put("timeout", timeout );
+	//	map.put("timeout", timeout );
 		
 		return map;
 	}
