@@ -7,7 +7,7 @@ Standards-Version: 3.9.6
 Homepage: http://www.liderahenk.org.tr
 
 Package: ahenk-conky
-Version: 1.0.0
+Version: 1.1
 Architecture: any
 Depends: python3 (>= 3), conky, conky-all, python3-easygui
 Description: Lider Ahenk Conky plugin

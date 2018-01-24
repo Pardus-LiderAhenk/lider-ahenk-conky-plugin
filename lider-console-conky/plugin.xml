@@ -227,17 +227,17 @@
 	<!-- Add extension point contribution for "policy execution" dialogs -->
 	<extension
   		point="tr.org.liderahenk.liderconsole.core.policymenu">
-  		<policyItem label="%command.profile" pluginName="conky" pluginVersion="1.0.0" 
+  		<policyItem label="%command.profile" pluginName="conky" pluginVersion="1.1" 
   		profileCommandId="tr.org.liderahenk.liderconsole.commands.ConkyProfile" 
   		profileDialogClass="tr.org.liderahenk.conky.dialogs.ConkyProfileDialog" />
   	</extension>
   	
   	<extension
   		point="tr.org.liderahenk.liderconsole.core.taskmenu">
-  		<taskItem label="%command.task" pluginName="conky" pluginVersion="1.0.0" taskCommandId="tr.org.liderahenk.liderconsole.commands.ConkyTask" selectionType="multi" description="Conky masaüstü uygulaması ile metin tabanlı bilgilerin kullanıcının masaüstünde görülmesini sağlar.&#xA;Mesaj iletmek için tıklayınız.." 
+  		<taskItem label="%command.task" pluginName="conky" pluginVersion="1.1" taskCommandId="tr.org.liderahenk.liderconsole.commands.ConkyTask" selectionType="multi" description="Conky masaüstü uygulaması ile metin tabanlı bilgilerin kullanıcının masaüstünde görülmesini sağlar.&#xA;Mesaj iletmek için tıklayınız.." 
   		imagePath="conky.png"/>
   		
-  		<taskItem label="%commandSendMessage.task" pluginName="conky" pluginVersion="1.0.0" taskCommandId="tr.org.liderahenk.liderconsole.commands.SendMessageTask" selectionType="multi" description="XMessage masaüstü uygulaması ile metin tabanlı bilgilerin kullanıcının masaüstünde görülmesini sağlar.&#xA;Mesaj iletmek için tıklayınız.." 
+  		<taskItem label="%commandSendMessage.task" pluginName="conky" pluginVersion="1.1" taskCommandId="tr.org.liderahenk.liderconsole.commands.SendMessageTask" selectionType="multi" description="XMessage masaüstü uygulaması ile metin tabanlı bilgilerin kullanıcının masaüstünde görülmesini sağlar.&#xA;Mesaj iletmek için tıklayınız.." 
   		imagePath="conky.png"/>
   	</extension>
   	
