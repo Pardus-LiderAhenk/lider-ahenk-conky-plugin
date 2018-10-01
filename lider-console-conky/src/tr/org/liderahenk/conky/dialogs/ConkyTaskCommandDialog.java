@@ -43,41 +43,46 @@ public class ConkyTaskCommandDialog extends DefaultTaskDialog {
 	private Button btnCheckButtonConkyMessage;
 	private Combo cmbSampleConfigs;
 	
-	private static final String DEFAULT_SETTING = ""
-			+ "alignment top_right\r"
-			+ "\nbackground yes\r"
-			+ "\nborder_width 1\r"
-			+ "\ncpu_avg_samples 2\r"
-			+ "\ndefault_color white\r"
-			+ "\ndefault_outline_color white\r"
-			+ "\ndefault_shade_color white\r"
-			+ "\ndraw_borders no\r"
-			+ "\ndraw_graph_borders yes\r"
-			+ "\ndraw_outline no\r"
-			+ "\ndraw_shades no\r"
-			+ "\nuse_xft yes\r"
-			+ "\nxftfont DejaVu Sans Mono:size=12\r"
-			+ "\ngap_x 5\r"
-			+ "\ngap_y 60\r"
-			+ "\nminimum_size 5 5\r"
-			+ "\nnet_avg_samples 2\r"
-			+ "\nno_buffers yes\r"
-			+ "\nout_to_console no\r"
-			+ "\nout_to_stderr no\r"
-			+ "\nextra_newline no\r"
-			+ "\nown_window yes\r"
-			+ "\nown_window_class Conky\r"
-			+ "\nown_window_type override\r"
-			+ "\nstippled_borders 0\r"
-			+ "\nupdate_interval 1.0\r"
-			+ "\nuppercase no\r"
-			+ "\nuse_spacer none\r"
-			+ "\nshow_graph_scale no\r"
-			+ "\nshow_graph_range no\r"
-			+ "\n\r"
-			+ "\nTEXT\r\n";
-			//+ "\nLider Ahenk Masa\u00FCst\u00FC Arkaplan Eklentisi v1.0.0";
-
+	
+	private String conkyDef=
+			"conky.config = {\n" + 
+			"	use_xft= true,\n" + 
+			"	xftalpha= .1,\n" + 
+			"	update_interval= 1,\n" + 
+			"	total_run_times= 0,\n" + 
+			"	background= true,\n" + 
+			"	own_window= true,\n" + 
+			"	own_window_type= 'desktop',\n" + 
+			"	own_window_transparent= true,\n" + 
+			"	own_window_hints= 'undecorated,below,sticky,skip_taskbar,skip_pager',\n" + 
+			"	own_window_colour= '000000',\n" + 
+			"	own_window_argb_visual= true,\n" + 
+			"	own_window_argb_value= 0,\n" + 
+			"	double_buffer= true,\n" + 
+			"	minimum_width= 270,\n" + 
+			"	maximum_width= 270,\n" + 
+			"	minimum_height= 10,\n" + 
+			"	draw_shades= false,\n" + 
+			"	draw_outline= false,\n" + 
+			"	draw_borders= false,\n" + 
+			"	draw_graph_borders= false,\n" + 
+			"	default_color= 'FFFFFF',\n" + 
+			"	default_shade_color= '333333',\n" + 
+			"	default_outline_color= 'black',\n" + 
+			"	color1 = 'A9A9A9',\n" + 
+			"	color3 = '616161',\n" + 
+			"	alignment= 'top_right',\n" + 
+			"	gap_x= 56,\n" + 
+			"	gap_y= 0,\n" + 
+			"	no_buffers= true,\n" + 
+			"	text_buffer_size = 2048,\n" + 
+			"	uppercase= false,\n" + 
+			"	cpu_avg_samples= 4,\n" + 
+			"	net_avg_samples = 2,\n" + 
+			"	override_utf8_locale= true,\n" + 
+			"	font= 'Ubuntu:style=medium:size=12'\n" + 
+			"}";
+			
 	
 	public ConkyTaskCommandDialog(Shell parentShell, Set<String> dnSet) {
 		super(parentShell, dnSet);
@@ -151,7 +156,9 @@ public class ConkyTaskCommandDialog extends DefaultTaskDialog {
 		
 		textSettings = new Text(composite, SWT.BORDER | SWT.MULTI  |SWT.H_SCROLL | SWT.V_SCROLL);
 		textSettings.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
-		textSettings.setText(DEFAULT_SETTING);
+		textSettings.setText(conkyDef);
+		
+//		textSettings.setText(DEFAULT_SETTING);
 		
 //		textSettings = new Text(tabFolder, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL );
 //		tbtmNewItem_1.setControl(textSettings);
@@ -190,7 +197,16 @@ public class ConkyTaskCommandDialog extends DefaultTaskDialog {
 	public Map<String, Object> getParameterMap() {
 		Map<String, Object> map = new HashMap<>();
 		
-		String conkyMessage = textSettings.getText() + textMessage.getText();
+		String hourText="${color1}\n" + 
+				"${voffset 20}\n" + 
+				"${alignr}${font Ubuntu:style=Medium:pixelsize=50}${time %H:%M}${font}\n" + 
+				"${voffset 10}\n" + 
+				"${alignr}${font Ubuntu:style=Medium:pixelsize=13}${time %A %d %B %Y}${font}\n"
+				+ "${hr}\n"+
+				"${alignr}${font Ubuntu:style=Medium:pixelsize=30} ";
+		
+		
+		String conkyMessage = textSettings.getText() + " conky.text = [[ "+ hourText +textMessage.getText() +" ]]";
 		
 		Boolean removeConkyMessage = false;
 		if(btnCheckButtonConkyMessage.getSelection()){
@@ -282,5 +298,6 @@ public class ConkyTaskCommandDialog extends DefaultTaskDialog {
 		if (content != null && !content.isEmpty()) {
 			textSettings.setText(content);
 		}
+		
 	}
 }
